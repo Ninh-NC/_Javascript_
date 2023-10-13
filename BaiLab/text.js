@@ -25,6 +25,12 @@ const account4 = {
   interestRate: 1,
   pin: 4444,
 };
+const account5 = {
+  owner: 'Ninh Chi',
+  movements: [430, 1300, 400, 1100, 90],
+  interestRate: 1,
+  pin: 5555,
+};
 ////
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -53,10 +59,13 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 /////////////////////////////////////////////////
-const accounts = [account1, account2, account3, account4];
-const displayMovements = movements => {
+const accounts = [account1, account2, account3, account4, account5];
+const displayMovements = (movements, sort = false) => {
   containerMovements.innerHTML = '';
-  movements.forEach((mov, i) => {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
         <div class="movements__row">
@@ -205,6 +214,28 @@ btnClose.addEventListener('click', function (e) {
   }
 
   inputCloseUsername.value = inputClosePin.value = '';
+});
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // Add movements
+    currentAccount.movements.push(amount);
+
+    // Update Ui
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = '';
+});
+
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
 
 /// lab 4.3
